@@ -72,7 +72,7 @@ Publishing needs the repository's workflow permissions to allow package writes.
 |---|---|
 | `/healthz` | Liveness: the process is running |
 | `/readyz` | Readiness: the database is reachable and its data is loaded |
-| `/metrics` | Prometheus metrics |
+| `/metrics` | Metrics in Prometheus format. No Prometheus server is included, so nothing collects or stores them |
 | `/api/devops/status` | Live data for the DevOps Dashboard page |
 
 ### Shutdown button

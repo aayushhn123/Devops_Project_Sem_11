@@ -55,12 +55,11 @@ pres.defineSlideMaster({ title: "Title", background: { color: BG }, objects: [] 
 
 /* ---------------------------------------------------------------- helpers */
 let current = 0;
-function newSlide(part, title, sub, notes) {
+function newSlide(part, title, sub) {
   if (part !== current) { pres.addSection({ title: SPEAKERS[part].part }); current = part; }
   const s = pres.addSlide({ masterName: `Part ${part}`, sectionTitle: SPEAKERS[part].part });
   s.addText(title, { placeholder: "title" });
   s.addText(sub, { placeholder: "sub" });
-  if (notes) s.addNotes(notes);
   return s;
 }
 const txt = (s, t, o) => s.addText(t, { isTextBox: true, fontFace: BODY, color: INK, margin: 0, valign: "top", ...o });
@@ -131,26 +130,23 @@ function frameBox(s, x, y, w, h) {                                  // the templ
     s.addText(id, { isTextBox: true, x: 0.8, y: 4.0 + i * 0.42, w: 0.9, h: 0.3, fontFace: MONO, fontSize: 14, color: P[1], margin: 0 });
     s.addText(nm, { isTextBox: true, x: 1.7, y: 4.0 + i * 0.42, w: 4, h: 0.3, fontFace: BODY, fontSize: 17, bold: true, color: INK, margin: 0 });
   });
-  [["Docker", "Package"], ["Compose", "Run locally"], ["Kubernetes", "Orchestrate"], ["GitHub Actions", "Automate"], ["Trivy", "Secure"], ["Prometheus metrics", "Monitor"]].forEach(([t, d], i) => {
+  [["Docker", "Package"], ["Compose", "Run locally"], ["Kubernetes", "Orchestrate"], ["GitHub Actions", "Automate"], ["Trivy", "Secure"], ["Prometheus metrics", "Format only, no server"]].forEach(([t, d], i) => {
     const x = 7.75 + (i % 2) * 2.55, y = 2.2 + Math.floor(i / 2) * 1.05;
     node(s, x, y, 2.4, 0.9, t, d, { titleSize: 15, subSize: 13 });
   });
   frameBox(s, 0.8, 5.65, 11.7, 1.4);
-  s.addNotes("Greet the audience. Introduce the project and the three of us. PriceScope is a working price tracker application. This project is about how we package, deploy, test and run it the DevOps way. Ritwik covers why, Aayush covers what we built step by step, and Iram covers the results.");
 }
 
 /* ================================================================ PART 1 - WHY DEVOPS */
 {
-  const s = newSlide(1, "The Application: PriceScope", "A real, data-heavy web app is what we took through the DevOps journey.",
-    "Keep this short. PriceScope tracks 8,817 Amazon electronics products. It has a Flask API, a PostgreSQL database and a web interface. It is a good DevOps subject because it has several moving parts: a web server, a database and a data-loading step that all need to start in the right order.");
+  const s = newSlide(1, "The Application: PriceScope", "A real, data-heavy web app is what we took through the DevOps journey.");
   numRow(s, 1, 0.6, 2.35, 5.0, 1, "What it does", "Tracks prices of 8,817 products and shows history, deals and alerts.", 1.2);
   numRow(s, 1, 0.6, 3.6, 5.0, 2, "How it is built", "Python Flask web server, PostgreSQL database, and a JavaScript front end.", 1.2);
   numRow(s, 1, 0.6, 4.85, 5.0, 3, "Why it suits DevOps", "Three parts must start in the right order: database, then data load, then the app.", 1.2);
   picture(s, IMG("overview.png"), 5.95, 2.2, 6.75, 4.5, "PriceScope overview page running on Kubernetes");
 }
 {
-  const s = newSlide(1, "Problem Statement", "“It works on my machine” is not good enough.",
-    "This is the core problem DevOps solves. Done by hand, running an app like this on a new laptop takes six steps, and any different version or missing step breaks it. If the server crashes, it stays down. Without automated tests, bugs slip through. Read the steps on the left, then the consequences on the right.");
+  const s = newSlide(1, "Problem Statement", "“It works on my machine” is not good enough.");
   card(s, 0.6, 2.25, 5.7, 4.45, INK);
   txt(s, "THE MANUAL WAY: RUNNING THE APP ON A NEW LAPTOP", { x: 0.95, y: 2.5, w: 5.0, h: 0.3, fontSize: 12, bold: true, color: "C5CAD3", charSpacing: 1 });
   ["Install PostgreSQL by hand", "Create a .env file and type the password", "pip install every Python library", "Run the data cleaning script", "Run the database load script", "Start the Python server"].forEach((t, i) => {
@@ -169,12 +165,11 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(1, "Objectives", "Four goals, each solving one problem from the last slide.",
-    "One line per objective. Each one maps to a step in Part 2. Containerise solves the different-machines problem, orchestrate solves crashes, automate solves risky changes, and monitor tells us the app is healthy.");
+  const s = newSlide(1, "Objectives", "Four goals, each solving one problem from the last slide.");
   [["01", "Containerise", "Package the app and everything it needs into one Docker image that runs anywhere."],
    ["02", "Orchestrate", "Use Kubernetes to run several copies, replace failures and update with no downtime."],
    ["03", "Automate", "Use a GitHub Actions pipeline to lint, test, scan and publish on every push."],
-   ["04", "Monitor", "Add health checks, Prometheus metrics and a live DevOps dashboard in the UI."]].forEach(([n, h, d], i) => {
+   ["04", "Monitor", "Add health checks, Prometheus-format metrics and a live DevOps dashboard in the UI."]].forEach(([n, h, d], i) => {
     const x = 0.6 + (i % 2) * 6.15, y = 2.35 + Math.floor(i / 2) * 2.15;
     card(s, x, y, 5.95, 1.95, SOFT);
     txt(s, n, { x: x + 0.3, y: y + 0.25, w: 1.3, h: 0.9, fontSize: 48, bold: true, fontFace: HEAD, color: P[1] });
@@ -183,8 +178,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(1, "What is DevOps?", "Building software and running software, treated as one continuous process.",
-    "DevOps joins development and operations. Instead of developers throwing code over a wall, every step is automated and repeatable. Walk through the seven steps left to right, naming the tool we used for each. The rest of the talk covers these in detail.");
+  const s = newSlide(1, "What is DevOps?", "Building software and running software, treated as one continuous process.");
   const st = [["Code", "Git, GitHub", "Save every change with history"], ["Test", "pytest, ruff", "Check nothing is broken"], ["Build", "Docker", "Package the app into an image"],
     ["Scan", "Trivy", "Look for known security holes"], ["Publish", "GHCR", "Store the image online"], ["Deploy", "Kubernetes", "Run it, with no downtime"], ["Monitor", "Probes, /metrics", "Watch that it stays healthy"]];
   const w = 1.6, gap = 0.15;
@@ -203,8 +197,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   txt(s, "If a step is done by hand, it can be done wrong. So we turn every step into code that runs the same way every time.", { x: 0.95, y: 5.82, w: 11.4, h: 0.7, fontSize: 20, fontFace: HEAD, color: WHITE });
 }
 {
-  const s = newSlide(1, "End-to-End Architecture", "Two paths: how code becomes an image, and how a user reaches the app.",
-    "This is the whole project on one slide. Top row is the build path: a developer pushes code, GitHub Actions tests and builds it, and the image is published to the GitHub Container Registry. Bottom row is the run path: a user's browser reaches a Kubernetes Service, which shares traffic between two app pods, which talk to PostgreSQL, whose data lives on a persistent volume. For this demo the cluster runs on our laptop using Docker Desktop, so the deploy script builds the image locally. A cloud cluster would pull the same image from the registry.");
+  const s = newSlide(1, "End-to-End Architecture", "Two paths: how code becomes an image, and how a user reaches the app.");
   txt(s, "BUILD PATH", { x: 0.6, y: 2.2, w: 3, h: 0.28, fontSize: 12, bold: true, color: MUTED, charSpacing: 1 });
   const W = 2.1, xs = [0.6, 3.1, 5.6, 8.1, 10.6];
   [["Developer", "git push"], ["GitHub", "stores the code"], ["GitHub Actions", "tests, scans, builds"], ["Container Registry", "GHCR stores the image"]].forEach(([t, d], i) => {
@@ -225,8 +218,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
 
 /* ================================================================ PART 2 - WHAT WE BUILT */
 {
-  const s = newSlide(2, "Step 1: Prepare the App", "Making the app behave well inside a container.",
-    "The first step is making the app container-ready. Settings come from environment variables, so the same image runs anywhere. Gunicorn, a production web server, serves the app. Health check addresses and metrics report its state. The load script has an if-empty option, so restarting never wipes the data. Mention the repository layout on the right: everything needed to run the project lives in Git.");
+  const s = newSlide(2, "Step 1: Prepare the App", "Making the app behave well inside a container.");
   [["Settings from the environment", "Database host and password are set outside the code."],
    ["Production web server", "gunicorn serves the app, built for real traffic."],
    ["Health and metrics addresses", "/healthz, /readyz and /metrics tell tools how the app is doing."],
@@ -234,8 +226,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   codePanel(s, "Devops_Project_Sem_11/\n├── app/            Flask API + web UI\n├── etl/            data loading\n├── sql/            schema, views, trigger\n├── data/clean/     the dataset\n├── tests/          automated tests\n├── Dockerfile\n├── docker-compose.yml\n├── k8s/            Kubernetes manifests\n├── scripts/        deploy-k8s.ps1\n└── .github/workflows/ci-cd.yml", 7.2, 2.3, 5.5, 4.35, 14);
 }
 {
-  const s = newSlide(2, "Step 2: Docker Image", "A Dockerfile is a recipe. It produces one package that runs the same everywhere.",
-    "A Docker image is the app plus Python plus every library, sealed together. Think of it like a shipping container: whatever is inside, it is handled the same way. We use a multi-stage build: the first stage installs libraries, and the second stage copies only the result, so the final image stays small. The app also runs as a normal user rather than root, which limits the damage if it were ever attacked.");
+  const s = newSlide(2, "Step 2: Docker Image", "A Dockerfile is a recipe. It produces one package that runs the same everywhere.");
   node(s, 0.6, 2.3, 2.6, 1.15, "Dockerfile", "the recipe, stored in Git", { subSize: 13 });
   arrow(s, 3.23, 2.87, 3.72, 2.87);
   node(s, 3.75, 2.3, 2.6, 1.15, "docker build", "follows the recipe", { fill: P[2], color: WHITE, subColor: "DDDDDD", subSize: 13 });
@@ -252,8 +243,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(2, "Our Docker Image", "Real output from our machine: small, layered and clean.",
-    "These are real terminal outputs. Docker images shows our image is 225 MB. Docker history shows the layers: only about 6 MB is our data, 31 MB is Python libraries, and the rest is the base Python and Debian system. Layers are reused, so a rebuild after a small code change takes seconds. On the right is the Trivy security scan: zero high or critical problems with a known fix, across Debian and all Python packages.");
+  const s = newSlide(2, "Our Docker Image", "Real output from our machine: small, layered and clean.");
   terminal(s, TERM("t_images.png"), 0.6, 2.25, 6.9, 0.87, "docker images output showing pricescope-app 1.0.0 at 225MB");
   terminal(s, TERM("t_layers.png"), 0.6, 3.22, 6.9, 3.5, "docker history output listing image layers and sizes");
   stat(s, 7.8, 2.25, 2.35, "225 MB", "final image size");
@@ -264,8 +254,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   txt(s, "Docker reuses unchanged layers, so a small code edit rebuilds in seconds.", { x: 8.0, y: 5.93, w: 4.5, h: 0.79, valign: "middle", fontSize: 14, color: MUTED });
 }
 {
-  const s = newSlide(2, "Step 3: Docker Compose", "One command starts all three containers, in the right order.",
-    "Compose describes the full application in one file. It solves the start-order problem: the database starts first, Compose waits until it is healthy, then the loader creates tables and loads 42,673 rows and exits, and only then does the app start. Six manual steps became one command. The database has no published port, so only the app can reach it. Point out on the log that running the loader a second time safely does nothing.");
+  const s = newSlide(2, "Step 3: Docker Compose", "One command starts all three containers, in the right order.");
   codePanel(s, "docker compose up --build", 0.6, 2.25, 6.2, 0.62, 16);
   node(s, 0.6, 3.1, 1.85, 1.25, "1. db", "waits until healthy", { subSize: 13 });
   arrow(s, 2.47, 3.72, 2.76, 3.72);
@@ -279,8 +268,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   terminal(s, TERM("t_loader.png"), 7.1, 3.46, 5.6, 3.3, "Loader logs showing rows loaded and second run skipping");
 }
 {
-  const s = newSlide(2, "Step 4: Kubernetes in Plain English", "Docker runs a container. Kubernetes keeps a whole application running.",
-    "Do not read all eight. Explain the idea: we tell Kubernetes what we want, for example two copies of the app, and it continuously makes that true. Use the analogy column. Then point at the ones we rely on most: Deployment, Service and StatefulSet.");
+  const s = newSlide(2, "Step 4: Kubernetes in Plain English", "Docker runs a container. Kubernetes keeps a whole application running.");
   [["Pod", "Our app running", "The smallest unit: one running container."],
    ["Deployment", "The manager", "Keeps 2 app pods alive and updates them safely."],
    ["Service", "The receptionist", "One address that shares visitors between pods."],
@@ -297,8 +285,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(2, "Our Kubernetes Architecture", "Everything lives in one namespace, defined by the YAML files in k8s/.",
-    "Follow the arrows from the left. The browser reaches the LoadBalancer Service on port 8081. It shares traffic between the two app pods. They reach the database through a Service called postgres, and the database stores its data on a persistent volume. The Job loads the data once. ConfigMap and Secret give the pods their settings. The service account is what allows the DevOps page to show live pods. This runs on a single-node Docker Desktop cluster, but the same files would work on a larger cluster.");
+  const s = newSlide(2, "Our Kubernetes Architecture", "Everything lives in one namespace, defined by the YAML files in k8s/.");
   node(s, 0.6, 3.25, 1.55, 1.1, "Browser", ":8081", { subSize: 13 });
   s.addShape(pres.ShapeType.roundRect, { x: 2.55, y: 2.25, w: 10.15, h: 4.5, fill: { color: WHITE }, line: { color: P[2], width: 1.5, dashType: "dash" }, rectRadius: 0.08 });
   txt(s, "Namespace: pricescope", { x: 2.75, y: 2.33, w: 4, h: 0.28, fontSize: 13, bold: true, color: P[2] });
@@ -322,8 +309,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   node(s, 2.85, 5.35, 1.95, 1.1, "ServiceAccount", "+ Role (RBAC)", { titleSize: 14, subSize: 13 });
 }
 {
-  const s = newSlide(2, "Running on Our Cluster", "Real output of kubectl: every part is up and healthy.",
-    "This is a real screenshot of our deployment. Point out the two app pods at 1 of 1 ready, postgres-0 running, the db-loader Job showing Completed, which is correct because it runs once, and the LoadBalancer Service on port 8081. One script, deploy-k8s.ps1, does all of this: builds the image, creates a random password, applies the files and waits until everything is ready.");
+  const s = newSlide(2, "Running on Our Cluster", "Real output of kubectl: every part is up and healthy.");
   terminal(s, TERM("t_k8s.png"), 0.6, 2.25, 7.0, 4.59, "kubectl output showing pods, services, deployment, statefulset and job");
   numRow(s, 2, 7.95, 2.35, 4.75, 1, "2 app pods, 1/1 ready", "Two copies share all the traffic.", 0.95);
   numRow(s, 2, 7.95, 3.35, 4.75, 2, "postgres-0 running", "The database, with a permanent name.", 0.95);
@@ -334,8 +320,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   txt(s, "Build, secret, manifests, wait", { x: 8.18, y: 6.28, w: 4.3, h: 0.34, fontSize: 14, color: "C5CAD3" });
 }
 {
-  const s = newSlide(2, "Step 5: CI/CD Pipeline", "Every push to GitHub runs these checks automatically, with no one watching.",
-    "CI means Continuous Integration: every change is automatically checked. CD means Continuous Delivery: a good build is automatically packaged and published. The file is .github/workflows/ci-cd.yml. Two jobs run first, and the build job only runs if both pass. So broken code can never become a published image. Pull requests get all the checks but do not publish.");
+  const s = newSlide(2, "Step 5: CI/CD Pipeline", "Every push to GitHub runs these checks automatically, with no one watching.");
   node(s, 0.6, 3.6, 1.7, 1.25, "git push", "to main branch", { fill: INK, color: WHITE, subColor: "C5CAD3", subSize: 13 });
   seg(s, 2.32, 4.22, 2.65, 4.22); seg(s, 2.65, 3.1, 2.65, 5.45);
   arrow(s, 2.65, 3.1, 2.98, 3.1); arrow(s, 2.65, 5.45, 2.98, 5.45);
@@ -358,8 +343,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(2, "Automated Testing", "Real results from the same commands the pipeline runs.",
-    "These are real results. 37 tests pass, and they run against a real PostgreSQL database, not a fake one. Every analysis query is executed, SQL Lab is checked to reject writes, the database trigger is tested, and so are the health endpoints and the shutdown safety checks. All 11 Kubernetes resources pass schema validation.");
+  const s = newSlide(2, "Automated Testing", "Real results from the same commands the pipeline runs.");
   stat(s, 0.6, 2.25, 2.35, "37 / 37", "tests passed", GOOD);
   stat(s, 3.1, 2.25, 2.35, "11 / 11", "K8s resources valid", GOOD);
   txt(s, "WHAT THE TESTS COVER", { x: 0.6, y: 3.75, w: 4.85, h: 0.3, fontSize: 12, bold: true, color: MUTED, charSpacing: 1 });
@@ -369,10 +353,56 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   terminal(s, TERM("t_kubeconform.png"), 5.8, 5.65, 6.9, 0.67, "kubeconform summary showing 11 valid resources");
 }
 
+{
+  const s = newSlide(2, "Proof: Docker and Compose", "Live output: the image is built and the containers are running.");
+  txt(s, "Docker", { x: 0.6, y: 2.2, w: 5.95, h: 0.4, fontSize: 20, bold: true });
+  terminal(s, TERM("p_docker.png"), 0.6, 2.65, 5.95, 2.7, "Docker version, pricescope-app image at 225MB and healthy running containers");
+  card(s, 0.6, 5.5, 5.95, 1.15, SOFT);
+  txt(s, "Our image is built, and its containers report healthy using the Dockerfile's health check.", { x: 0.85, y: 5.5, w: 5.45, h: 1.15, fontSize: 15, valign: "middle" });
+  txt(s, "Docker Compose", { x: 6.75, y: 2.2, w: 5.95, h: 0.4, fontSize: 20, bold: true });
+  terminal(s, TERM("p_compose.png"), 6.75, 2.65, 5.95, 2.7, "Compose version and app, db and loader services");
+  card(s, 6.75, 5.5, 5.95, 1.15, SOFT);
+  txt(s, "All three services ran from one file. Exited (0) means the loader finished successfully.", { x: 7.0, y: 5.5, w: 5.45, h: 1.15, fontSize: 15, valign: "middle" });
+}
+{
+  const s = newSlide(2, "Proof: Kubernetes", "Live output from our cluster, and the same pods inside our own app.");
+  terminal(s, TERM("p_k8s.png"), 0.6, 2.25, 6.95, 3.82, "kubectl version, nodes, pods and services");
+  caption(s, "kubectl on our single-node Docker Desktop cluster", 0.6, 6.15, 6.95);
+  caption(s, "The DevOps Dashboard in our app, reading the Kubernetes API", 7.8, 2.25, 4.9);
+  picture(s, IMG("proof_pods.png"), 7.8, 2.55, 4.9, 1.25, "Live cluster table in the DevOps Dashboard");
+  numRow(s, 2, 7.8, 4.05, 4.9, 1, "Cluster is Ready", "A real control-plane node on v1.36.1.", 0.85);
+  numRow(s, 2, 7.8, 4.85, 4.9, 2, "Pods are running", "2 app pods and the database, 0 restarts.", 0.85);
+  numRow(s, 2, 7.8, 5.65, 4.9, 3, "Service is live", "The LoadBalancer serves port 8081.", 0.85);
+}
+{
+  const s = newSlide(2, "Proof: GitHub Actions", "Our pipeline really ran on GitHub: all 3 jobs passed in 1 min 35 s.");
+  caption(s, "Pipeline run on GitHub", 0.6, 2.13, 5.6);
+  picture(s, IMG("proof_actions_run.png"), 0.6, 2.42, 5.6, 2.28, "GitHub Actions run with status Success and three green jobs");
+  caption(s, "Published image on GitHub Container Registry", 0.6, 4.77, 5.6);
+  picture(s, IMG("proof_ghcr.png"), 0.6, 5.05, 5.6, 1.82, "pricescope-app package page on GHCR");
+  caption(s, "Steps inside the Build, scan and publish job", 6.4, 2.13, 6.3);
+  picture(s, IMG("proof_actions_steps.png"), 6.4, 2.42, 6.3, 2.69, "Job steps with green ticks, including Scan image and Publish image");
+  card(s, 6.4, 5.25, 6.3, 1.62, INK);
+  txt(s, "Anyone can pull our image", { x: 6.65, y: 5.36, w: 5.8, h: 0.34, fontSize: 16, bold: true, color: WHITE });
+  txt(s, "docker pull ghcr.io/aayushhn123/\npricescope-app:latest", { x: 6.65, y: 5.72, w: 5.8, h: 0.6, fontFace: MONO, fontSize: 15, color: "E8E6DF" });
+  txt(s, "Published tags: latest and f5ff888 (the commit)", { x: 6.65, y: 6.4, w: 5.8, h: 0.34, fontSize: 14, color: "C5CAD3" });
+}
+{
+  const s = newSlide(2, "Proof: Trivy and Prometheus Metrics", "A clean security scan, and the metrics our app exposes.");
+  txt(s, "Trivy security scan", { x: 0.6, y: 2.2, w: 5.75, h: 0.4, fontSize: 20, bold: true });
+  terminal(s, TERM("p_trivy.png"), 0.6, 2.65, 5.75, 2.75, "Trivy results showing 0 vulnerabilities across all targets");
+  card(s, 0.6, 5.55, 5.75, 1.2, SOFT);
+  txt(s, "Counts high and critical issues that have a known fix. In the pipeline, Trivy reports but does not fail the build.", { x: 0.85, y: 5.55, w: 5.25, h: 1.2, fontSize: 15, valign: "middle" });
+  txt(s, "Prometheus-format metrics", { x: 6.55, y: 2.2, w: 6.15, h: 0.4, fontSize: 20, bold: true });
+  terminal(s, TERM("p_metrics.png"), 6.55, 2.65, 6.15, 2.75, "Metrics output from the app in Prometheus text format");
+  card(s, 6.55, 5.55, 6.15, 1.2, INK);
+  txt(s, "No Prometheus server was used.", { x: 6.8, y: 5.63, w: 5.65, h: 0.36, fontSize: 17, bold: true, color: WHITE });
+  txt(s, "The app only exposes its metrics in Prometheus format. Nothing collects or stores them.", { x: 6.8, y: 6.0, w: 5.65, h: 0.68, fontSize: 14, color: "C5CAD3" });
+}
+
 /* ================================================================ PART 3 - RESULTS */
 {
-  const s = newSlide(3, "The DevOps Dashboard", "A dedicated page makes DevOps visible in the UI itself.",
-    "This is a page in the application, and this is a real screenshot from Kubernetes. The numbers at the top are live and refresh every five seconds. The table reads directly from the Kubernetes API, and the highlighted row shows which pod is serving you. Refresh it and that can change, which demonstrates load balancing. Also point out the status pill at the top right, and the team names in the sidebar.");
+  const s = newSlide(3, "The DevOps Dashboard", "A dedicated page makes DevOps visible in the UI itself.");
   picture(s, IMG("devops_top.png"), 0.6, 2.25, 7.75, 4.45, "DevOps dashboard showing KPIs, pipeline, live pods and team");
   numRow(s, 3, 8.65, 2.3, 4.05, 1, "Live numbers", "Environment, version, uptime, database health, traffic.", 1.05);
   numRow(s, 3, 8.65, 3.42, 4.05, 2, "Pipeline view", "The seven stages each change goes through.", 1.05);
@@ -380,8 +410,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   numRow(s, 3, 8.65, 5.66, 4.05, 4, "Status and team", "Every page shows where it runs and who built it.", 1.05);
 }
 {
-  const s = newSlide(3, "The Application on Kubernetes", "Every feature runs inside the cluster, served by our pods.",
-    "These screens are the live app running on Kubernetes: analytics, search, price tracking, alerts and SQL Lab all work through the pods. Notice the top right of each screen shows Kubernetes, Healthy and the Shutdown button.");
+  const s = newSlide(3, "The Application on Kubernetes", "Every feature runs inside the cluster, served by our pods.");
   picture(s, IMG("explorer.png"), 0.6, 2.2, 5.95, 3.35, "Product explorer searching for Sony headphones");
   picture(s, IMG("modal.png"), 6.75, 2.2, 5.95, 3.35, "Product detail window with price history chart");
   txt(s, "Product Explorer", { x: 0.6, y: 5.65, w: 5.95, h: 0.34, fontSize: 18, bold: true });
@@ -390,8 +419,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   txt(s, "Price history, category rank and alerts", { x: 6.75, y: 6.0, w: 5.95, h: 0.3, fontSize: 14, color: MUTED });
 }
 {
-  const s = newSlide(3, "Shutdown Button", "Stops the app from the UI, whichever way it is running.",
-    "The Shutdown button is at the top right of every page. It first asks for confirmation, then shows the exact command to start again. The interesting part is that the method differs. On Kubernetes, if a pod simply exits, Kubernetes restarts it, which is its self-healing doing its job. So the button instead asks Kubernetes for zero copies. On Compose we set the restart policy so a clean exit stays stopped. The database keeps running in all cases, so no data is lost. For safety the request needs a special header, which stops other websites from triggering it, and it can be switched off with one setting.");
+  const s = newSlide(3, "Shutdown Button", "Stops the app from the UI, whichever way it is running.");
   [["1  Click, top right", "shutdown_button.png", "Shutdown button in the top bar"], ["2  Confirm", "shutdown_confirm_crop.png", "Shutdown confirmation dialog"], ["3  App stopped", "shutdown_done_crop.png", "Stopped screen showing the restart command"]].forEach(([t, f, alt], i) => {
     const x = 0.6 + i * 3.05;
     s.addShape(pres.ShapeType.rect, { x, y: 2.2, w: 2.95, h: 1.97, fill: { color: TERMBG }, line: { color: TERMBG, width: 0 } });
@@ -411,8 +439,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   caption(s, "Tested on Compose by clicking the button in a browser, and on Kubernetes by sending the same request. Each time the app stopped and the command brought it back.", 0.6, 6.5, 12.1);
 }
 {
-  const s = newSlide(3, "Self-Healing", "We deleted a running pod on purpose. Users never noticed.",
-    "This was a real test. We kept sending traffic constantly and deleted a pod. Kubernetes noticed that only one copy was left and started a replacement. The replacement was ready in four to eight seconds. Meanwhile the second pod and the Service kept serving, so across three measured runs, 1,648 requests were sent and none failed. Compare the pod names before and after in the screenshot: gjjmm is gone, and 8rznx has replaced it.");
+  const s = newSlide(3, "Self-Healing", "We deleted a running pod on purpose. Users never noticed.");
   terminal(s, TERM("t_selfheal.png"), 0.6, 2.25, 7.4, 2.97, "kubectl output showing a pod deleted and replaced");
   [["A pod dies", P[1]], ["K8s sees 1 of 2", P[2]], ["Starts a new pod", P[2]], ["Back to 2", GOOD]].forEach(([t, c], i) => {
     const x = 0.6 + i * 1.88;
@@ -426,8 +453,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   txt(s, "4 parallel clients sent steady traffic while the pod was deleted.", { x: 8.55, y: 5.59, w: 3.95, h: 0.9, fontSize: 14, color: MUTED });
 }
 {
-  const s = newSlide(3, "Scaling and Zero-Downtime Updates", "More copies on demand, and new versions with no outage.",
-    "Left: scaling. One command took us from 2 pods to 4 in under five seconds. Right: rolling update. Kubernetes starts a new pod, waits until it is ready, and only then removes an old one. Our first test actually failed one request. The cause was a pod shutting down before traffic had stopped going to it. We added a short preStop delay and re-tested, and across three runs 1,838 requests had no failures. This is exactly why you test.");
+  const s = newSlide(3, "Scaling and Zero-Downtime Updates", "More copies on demand, and new versions with no outage.");
   txt(s, "Scaling up", { x: 0.6, y: 2.2, w: 6, h: 0.4, fontSize: 20, bold: true });
   terminal(s, TERM("t_scale.png"), 0.6, 2.65, 5.9, 2.52, "kubectl scale output showing 4 running pods");
   stat(s, 0.6, 5.35, 5.9, "4.8 s", "to go from 2 to 4 running pods");
@@ -442,15 +468,14 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   stat(s, 9.85, 5.35, 2.85, "0 failed", "of 1,838 requests, 3 runs", GOOD);
 }
 {
-  const s = newSlide(3, "Data Safety and Monitoring", "The data survives, and the app reports its own health.",
-    "Left: we saved an alert, deleted the database pod completely, and the alert was still there when it came back, because the data lives on a persistent volume outside the pod. Right: the health checks. Liveness asks whether the app is alive; Kubernetes restarts it if not. Readiness asks whether it can serve users; if not, it gets no traffic. The metrics address gives numbers in the format used by Prometheus, the standard monitoring tool.");
+  const s = newSlide(3, "Data Safety and Monitoring", "The data survives, and the app reports its own health.");
   txt(s, "Data survives a database crash", { x: 0.6, y: 2.2, w: 5.9, h: 0.4, fontSize: 20, bold: true });
   terminal(s, TERM("t_persist.png"), 0.6, 2.65, 5.9, 2.54, "Watchlist count stays 1 after postgres pod deletion");
   card(s, 0.6, 5.35, 5.9, 1.3, SOFT);
   txt(s, "Same count before and after the pod was deleted. The app reconnected by itself within 7 seconds.", { x: 0.85, y: 5.47, w: 5.4, h: 1.06, fontSize: 16, valign: "middle" });
   txt(s, "The app reports its health", { x: 6.8, y: 2.2, w: 5.9, h: 0.4, fontSize: 20, bold: true });
   terminal(s, TERM("t_health.png"), 6.8, 2.65, 5.9, 1.84, "curl responses from healthz, readyz and metrics");
-  [["/healthz", "Alive? If not, restart it."], ["/readyz", "Ready? If not, send no traffic."], ["/metrics", "Numbers for Prometheus."]].forEach(([p, d], i) => {
+  [["/healthz", "Alive? If not, restart it."], ["/readyz", "Ready? If not, send no traffic."], ["/metrics", "Prometheus format. No server used."]].forEach(([p, d], i) => {
     const y = 4.65 + i * 0.68;
     card(s, 6.8, y, 5.9, 0.6, SOFT);
     txt(s, p, { x: 7.0, y, w: 1.6, h: 0.6, valign: "middle", fontFace: MONO, fontSize: 14, bold: true, color: P[3] });
@@ -458,8 +483,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(3, "Challenges We Hit", "Real problems from our testing, and how we fixed them.",
-    "These all genuinely happened. The dropped request is the best story: we only found it because we tested under steady traffic, and the first measurement was too light to reveal it. The shutdown button needed thought because Kubernetes is designed to undo a stopped app. Be open about these, because examiners value real problem solving.");
+  const s = newSlide(3, "Challenges We Hit", "Real problems from our testing, and how we fixed them.");
   [["One request failed during an update", "Pods were shutting down before traffic had moved away.", "Added a 5-second preStop delay. 0 failures in 3 re-tests."],
    ["Kubernetes undid the shutdown", "It restarts any pod that exits. That is its job.", "The button scales to 0 pods instead of exiting."],
    ["Restarts could wipe the data", "The load script always rebuilt the database from scratch.", "Added --if-empty, so a loaded database is left alone."],
@@ -473,8 +497,7 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
 }
 {
-  const s = newSlide(3, "What DevOps Gives Us", "The manual way compared with ours, in numbers we measured ourselves.",
-    "This slide summarises the whole project. Read two or three rows that stand out: six manual steps become one command, a crash heals itself in seconds instead of staying down, and testing is 37 automated tests instead of manual checks. All the numbers in the right column were measured on our own laptop's single-node cluster.");
+  const s = newSlide(3, "What DevOps Gives Us", "The manual way compared with ours, in numbers we measured ourselves.");
   const h = o => ({ bold: true, color: WHITE, fill: { color: P[3] }, fontSize: 15, ...o });
   const good = t => ({ text: t, options: { color: GOOD, bold: true } });
   const b = t => ({ text: t, options: { bold: true } });
@@ -491,15 +514,14 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   ], { x: 0.6, y: 2.25, w: 12.1, colW: [3.1, 4.1, 4.9], rowH: 0.48, fontFace: BODY, fontSize: 15, color: INK, valign: "middle", fill: { color: WHITE }, border: { type: "solid", color: LINE, pt: 0.75 } });
 }
 {
-  const s = newSlide(3, "Conclusion & Future Scope", "A working DevOps pipeline, and a clear path to take it further.",
-    "Summarise in one breath: we took a data-heavy web app, packaged it with Docker, ran it on Kubernetes, automated checks with GitHub Actions, and made its health visible. Future scope: the cluster runs on one laptop today, so a cloud cluster is the natural next step, along with dashboards and autoscaling.");
+  const s = newSlide(3, "Conclusion & Future Scope", "A working DevOps pipeline, and a clear path to take it further.");
   card(s, 0.6, 2.3, 5.95, 4.35, SOFT);
   txt(s, "WHAT WE DELIVERED", { x: 0.9, y: 2.5, w: 5.4, h: 0.3, fontSize: 13, bold: true, color: P[3], charSpacing: 1 });
   txt(s, ["A 225 MB, non-root Docker image", "One-command start with Docker Compose", "Kubernetes deployment that heals and scales", "CI/CD pipeline with tests and security scan", "Health checks, metrics and a live dashboard", "Shutdown control built into the UI"].map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
     { x: 0.9, y: 2.9, w: 5.4, h: 3.55, fontSize: 17, paraSpaceAfter: 9 });
   card(s, 6.75, 2.3, 5.95, 4.35, INK);
   txt(s, "FUTURE SCOPE", { x: 7.05, y: 2.5, w: 5.4, h: 0.3, fontSize: 13, bold: true, color: "C5CAD3", charSpacing: 1 });
-  txt(s, ["Deploy to a cloud cluster (AWS EKS or Google GKE)", "Prometheus and Grafana dashboards", "Autoscaling based on real load", "Automatic deployment after each pipeline run", "Package the manifests as a Helm chart"].map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
+  txt(s, ["Deploy to a cloud cluster (AWS EKS or Google GKE)", "Run a Prometheus server with Grafana dashboards", "Autoscaling based on real load", "Automatic deployment after each pipeline run", "Package the manifests as a Helm chart"].map((t, i, a) => ({ text: t, options: { bullet: true, breakLine: i < a.length - 1 } })),
     { x: 7.05, y: 2.9, w: 5.4, h: 3.55, fontSize: 17, color: WHITE, paraSpaceAfter: 9 });
 }
 
@@ -515,7 +537,6 @@ function frameBox(s, x, y, w, h) {                                  // the templ
   });
   s.addText("BTI DS  ·  Semester 11  ·  DevOps Project", { isTextBox: true, x: 0.8, y: 4.65, w: 8, h: 0.35, fontFace: BODY, fontSize: 16, color: MUTED, margin: 0 });
   frameBox(s, 0.8, 5.65, 11.7, 1.4);
-  s.addNotes("Thank the audience and invite questions. Ritwik takes questions on DevOps concepts and the problem, Aayush takes Docker, Kubernetes and pipeline questions, Iram takes results and testing questions.");
 }
 
 pres.writeFile({ fileName: OUT }).then(async () => {
