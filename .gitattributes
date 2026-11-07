@@ -1,2 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# The data files are loaded byte-for-byte by PostgreSQL COPY
+*.csv -text
+# Scripts and manifests run inside Linux
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
+# Windows batch files need Windows line endings
+*.bat text eol=crlf

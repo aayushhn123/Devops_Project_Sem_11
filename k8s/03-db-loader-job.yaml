@@ -1,0 +1,39 @@
+# Runs to completion once: schema, COPY, views, trigger. Safe to re-run (--if-empty).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-loader
+  namespace: pricescope
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: db-loader
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          command: ["sh", "-c", "until pg_isready -h postgres -U postgres; do sleep 2; done"]
+      containers:
+        - name: loader
+          image: pricescope-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          command: ["python", "etl/load.py", "--if-empty"]
+          envFrom:
+            - configMapRef:
+                name: pricescope-config
+            - secretRef:
+                name: pricescope-db
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 256Mi

@@ -1,0 +1,9 @@
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = ["E702"]    # the filter code in server.py keeps short "where; params" pairs on one line
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

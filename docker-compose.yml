@@ -1,0 +1,59 @@
+# One command runs the whole stack:  docker compose up --build
+# The database has no published port, so only the app container can reach it.
+name: pricescope
+
+x-db-env: &db-env
+  PGHOST: db
+  PGPORT: "5432"
+  PGUSER: postgres
+  PGPASSWORD: ${PGPASSWORD:-pricescope_local}
+  PGDATABASE: price_tracker
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: ${PGPASSWORD:-pricescope_local}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Runs once: creates the schema and loads the CSVs, or skips if already loaded.
+  loader:
+    image: pricescope-app:1.0.0
+    build: &app-build
+      context: .
+      args:
+        APP_VERSION: "1.0.0"
+        GIT_SHA: ${GIT_SHA:-local}
+        BUILD_TIME: ${BUILD_TIME:-unknown}
+    command: ["python", "etl/load.py", "--if-empty"]
+    environment: *db-env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    image: pricescope-app:1.0.0
+    build: *app-build
+    hostname: pricescope-app
+    ports:
+      - "5000:5000"
+    environment:
+      <<: *db-env
+      DEPLOY_ENV: Docker Compose
+      ALLOW_SHUTDOWN: "true"
+    depends_on:
+      loader:
+        condition: service_completed_successfully
+    # on-failure, not always: the UI's Shutdown button exits cleanly and must stay stopped.
+    restart: on-failure
+
+volumes:
+  pgdata:

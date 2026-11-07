@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pricescope-config
+  namespace: pricescope
+data:
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGUSER: postgres
+  PGDATABASE: price_tracker
+  DEPLOY_ENV: Kubernetes
+  ALLOW_SHUTDOWN: "true"

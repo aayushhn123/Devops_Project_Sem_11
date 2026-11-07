@@ -1,0 +1,35 @@
+# Least privilege: the app may read pods for the DevOps page and scale only its own
+# Deployment for the Shutdown button. It can do nothing else in the cluster.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pricescope-app
+  namespace: pricescope
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pricescope-app
+  namespace: pricescope
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    resourceNames: ["pricescope-app"]
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pricescope-app
+  namespace: pricescope
+subjects:
+  - kind: ServiceAccount
+    name: pricescope-app
+    namespace: pricescope
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pricescope-app
